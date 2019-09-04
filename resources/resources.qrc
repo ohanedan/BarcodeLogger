@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>barcode.ico</file>
+        <file>about.ico</file>
+    </qresource>
+    <qresource prefix="/languages">
+        <file>tr.qm</file>
+    </qresource>
+</RCC>
