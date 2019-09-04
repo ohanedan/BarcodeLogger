@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(Controller *controller, std::shared_ptr<Settings> s) :
   QMainWindow(),
-  ui(new Ui::MainWindow), mIsScan(false)
+  ui(new Ui::MainWindow), mIsScan(false), mShowComputerNames(false)
 {
   ui->setupUi(this);
   connect(ui->pbScan, &QPushButton::clicked,
@@ -55,7 +55,11 @@ void MainWindow::useSettings(std::shared_ptr<Settings> settings)
   {
     mTimer.stop();
   }
-  mShowComputerNames = settings->getShowComputerNames();
+  if(mShowComputerNames != settings->getShowComputerNames())
+  {
+    mShowComputerNames = settings->getShowComputerNames();
+    slotShowBarcode(ui->lbBarcode->text());
+  }
 }
 
 void MainWindow::listBarcode(QVector<std::shared_ptr<Barcode> > barcode)
@@ -151,7 +155,7 @@ void MainWindow::slotSettingsChanged(std::shared_ptr<Settings> settings)
 
 void MainWindow::slotCleanBarcodeList()
 {
-  ui->leBarcode->setText("-"); //when deleted barcode, it shows on lbBarcode
+  ui->leBarcode->setText(""); //when deleted barcode, it shows on lbBarcode
   QVector<std::shared_ptr<Barcode>> barcode;
   listBarcode(barcode);
 }
