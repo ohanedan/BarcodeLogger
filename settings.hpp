@@ -10,7 +10,8 @@ class Settings : public QObject
 {
   Q_OBJECT
 public:
-  Settings(QString lang, bool autoFocus) : mLang(lang), mAutoFocus(autoFocus){}
+  Settings(QString lang, bool autoFocus, bool showComputerNames) : mLang(lang),
+    mAutoFocus(autoFocus), mShowComputerNames(showComputerNames){}
 
   inline QString getLang() const
   {
@@ -22,9 +23,15 @@ public:
     return mAutoFocus;
   }
 
+  inline bool getShowComputerNames() const
+  {
+    return mShowComputerNames;
+  }
+
 private:
   QString mLang;
   int mAutoFocus;
+  int mShowComputerNames;
 };
 
 #endif // SETTINGS_HPP

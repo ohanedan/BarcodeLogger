@@ -45,6 +45,7 @@ private:
   Ui::MainWindow *ui;
   QTimer mTimer;
   bool mIsScan;
+  bool mShowComputerNames;
 };
 
 #endif // MAINWINDOW_H

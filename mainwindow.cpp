@@ -55,6 +55,7 @@ void MainWindow::useSettings(std::shared_ptr<Settings> settings)
   {
     mTimer.stop();
   }
+  mShowComputerNames = settings->getShowComputerNames();
 }
 
 void MainWindow::listBarcode(QVector<std::shared_ptr<Barcode> > barcode)
@@ -62,8 +63,12 @@ void MainWindow::listBarcode(QVector<std::shared_ptr<Barcode> > barcode)
   ui->lwScannedTimes->clear();
   for(auto b : barcode)
   {
-    QListWidgetItem *item = new QListWidgetItem(
-          b->getDateTime().toString());
+    QString itemText = b->getDateTime().toString();
+    if(mShowComputerNames)
+    {
+      itemText += "-" + b->getComputerName();
+    }
+    QListWidgetItem *item = new QListWidgetItem(itemText);
     item->setData(61, QVariant(b->getId()));
     ui->lwScannedTimes->addItem(item);
   }

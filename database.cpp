@@ -1,6 +1,7 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 #include <QVariant>
+#include <QHostInfo>
 #include "database.h"
 
 Database::Database() : ISaver()
@@ -24,13 +25,15 @@ QString Database::init()
 void Database::createTables()
 {
   mDb.exec("CREATE TABLE \"barcodes\" ("
-          "\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-          "\"data\"	TEXT NOT NULL,"
-          "\"datetime\"	TEXT NOT NULL);");
+           "\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+           "\"data\"	TEXT NOT NULL,"
+           "\"computer\"	TEXT NOT NULL,"
+           "\"datetime\"	TEXT NOT NULL);");
   mDb.exec("CREATE TABLE \"settings\" ("
-          "\"lang\"	TEXT NOT NULL,"
+           "\"lang\"	TEXT NOT NULL,"
+           "\"showComputerNames\"	INTEGER NOT NULL,"
            "\"autofocus\"	INTEGER NOT NULL);");
-  mDb.exec("INSERT INTO settings VALUES(\"en\",1)");
+  mDb.exec("INSERT INTO settings VALUES(\"en\",1,1)");
 }
 
 QVector<std::shared_ptr<Barcode>> Database::slotGetBarcode(
@@ -38,13 +41,14 @@ QVector<std::shared_ptr<Barcode>> Database::slotGetBarcode(
 {
   QVector<std::shared_ptr<Barcode>> temp;
   QSqlQuery query = mDb.exec("SELECT * FROM barcodes WHERE data="
-                           "\"" + barcodeData + "\"");
+                             "\"" + barcodeData + "\"");
   while(query.next())
   {
     temp.append(std::make_shared<Barcode>(query.value("id").toInt(),
-                            query.value("data").toString(),
-                            QDateTime::fromTime_t(
-                              query.value("datetime").toUInt())));
+                                          query.value("data").toString(),
+                                          QDateTime::fromTime_t(
+                                            query.value("datetime").toUInt()),
+                                          query.value("computer").toString()));
   }
   return temp;
 }
@@ -54,13 +58,16 @@ std::shared_ptr<Settings> Database::getSettings()
   QSqlQuery query = mDb.exec("SELECT * FROM settings");
   query.next();
   return std::make_shared<Settings>(query.value("lang").toString(),
-                                    query.value("autofocus").toBool());
+                                    query.value("autofocus").toBool(),
+                                    query.value("showComputerNames").toBool());
 }
 
 void Database::slotSetSettings(std::shared_ptr<Settings> settings)
 {
   mDb.exec("UPDATE settings SET lang=\"" + settings->getLang() + "\""
-           + ", autofocus=" + QString::number(settings->getAutoFocus()));
+           + ", autofocus=" + QString::number(settings->getAutoFocus()) +
+           ", showComputerNames=" + QString::number(
+             settings->getShowComputerNames()));
 }
 
 std::shared_ptr<Settings> Database::slotGetSettings()
@@ -76,8 +83,8 @@ void Database::slotDeleteAllBarcodes()
 void Database::slotSaveBarcode(const QString& barcodeData)
 {
   QString time = QString::number(QDateTime::currentDateTime().toTime_t());
-  mDb.exec("INSERT INTO barcodes(data,datetime) VALUES('" + barcodeData +
-           "', " + time + ");");
+  mDb.exec("INSERT INTO barcodes(data,datetime,computer) VALUES('" + barcodeData
+           + "', " + time + ",'" + QHostInfo::localHostName() + "');");
 }
 
 QVector<QString> Database::slotGetAllBarcodeNames()

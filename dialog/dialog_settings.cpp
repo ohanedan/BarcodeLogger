@@ -30,6 +30,7 @@ void Settings::init()
 {
   ui->cbLang->setCurrentText(mSettings->getLang());
   ui->cbAutoFocus->setChecked(mSettings->getAutoFocus());
+  ui->cbShowComputer->setChecked(mSettings->getShowComputerNames());
 }
 
 void Settings::slotSaveData()
@@ -43,7 +44,8 @@ void Settings::slotSaveData()
   }
   emit signalSetSettings(std::make_shared<::Settings>(
                            ui->cbLang->currentText(),
-                           ui->cbAutoFocus->isChecked()));
+                           ui->cbAutoFocus->isChecked(),
+                           ui->cbShowComputer->isChecked()));
   this->close();
 }
 }//namespace dialog

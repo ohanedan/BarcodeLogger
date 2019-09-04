@@ -12,13 +12,13 @@ class Barcode : public QObject
   Q_OBJECT
 public:
   Barcode(int id, QString data,
-          QDateTime dateTime) : mId(id), mData(data), mDateTime(dateTime){}
+          QDateTime dateTime, QString computerName) : mId(id), mData(data),
+    mComputerName(computerName), mDateTime(dateTime){}
 
   inline int getId() const
   {
     return mId;
   }
-
 
   inline QString getData()  const
   {
@@ -30,9 +30,15 @@ public:
     return mDateTime;
   }
 
+  inline QString getComputerName() const
+  {
+    return mComputerName;
+  }
+
 private:
   int mId;
   QString mData;
+  QString mComputerName;
   QDateTime mDateTime;
 };
 
