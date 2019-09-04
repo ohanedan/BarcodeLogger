@@ -9,6 +9,11 @@ About::About(QWidget *parent) :
 {
   ui->setupUi(this);
   this->setFixedSize(this->size());
+  ui->lbVersion->setText(QString("Version: %1.%2.%3.%4")
+                         .arg(VERSION_MAJOR)
+                         .arg(VERSION_MINOR)
+                         .arg(VERSION_PATCH)
+                         .arg(GIT_CURRENT));
 }
 
 About::~About()
